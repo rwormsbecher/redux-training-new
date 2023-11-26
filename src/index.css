@@ -123,3 +123,13 @@ button[disabled] {
 .btn-cancel {
 	margin-left: 2.5rem;
 }
+
+.action-bar {
+	display: flex;
+	justify-content: flex-end;
+	margin-right: 27px;
+}
+
+h1 {
+	margin-top: 0;
+}

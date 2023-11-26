@@ -5,6 +5,7 @@ import { ListComponent } from "./components/ListComponent";
 import citiesJson from "./cities.json";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
+import AddCityForm from "./components/AddCityForm";
 
 function App() {
 	const [activeCity, setActiveCity] = useState(citiesJson.cities[0]);
@@ -34,7 +35,11 @@ function App() {
 				</React.Fragment>
 			)}
 
-			{mode === "Add" && <div>hallo</div>}
+			{mode === "Add" && (
+				<div>
+					<AddCityForm handleMode={handleMode} />
+				</div>
+			)}
 		</div>
 	);
 }

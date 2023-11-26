@@ -13,5 +13,5 @@ export const AddCityButton: React.FC<AddCityButtonProps> = ({ mode, handleMode }
 				Add city
 			</button>
 		) : null;
-	return <div>{content}</div>;
+	return <div className="action-bar">{content}</div>;
 };

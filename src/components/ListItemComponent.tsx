@@ -1,15 +1,22 @@
 import React from "react";
-import { City } from "../City"; // Assuming this is your model
+import { City } from "../models/City";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { setActiveCity } from "../store/cities/citiesSlice";
 
 interface ListItemComponentProps {
 	city: City;
-	selectedCity: City;
-	selectCity: (city: City) => void;
 }
 
-const ListItemComponent: React.FC<ListItemComponentProps> = ({ city, selectedCity, selectCity }) => {
+const ListItemComponent: React.FC<ListItemComponentProps> = ({ city }) => {
+	const dispatch = useDispatch<AppDispatch>();
+	const { activeCity } = useSelector((state: RootState) => state.cities);
+
 	return (
-		<li className={city.cityName === selectedCity.cityName ? "active-city" : ""} onClick={() => selectCity(city)}>
+		<li
+			className={city.cityName === activeCity.cityName ? "active-city" : ""}
+			onClick={() => dispatch(setActiveCity(city))}
+		>
 			{city.cityName}
 		</li>
 	);

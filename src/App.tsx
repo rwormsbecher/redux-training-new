@@ -1,43 +1,41 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { ShowcaseComponent } from "./components/ShowcaseComponent";
-import { City } from "./City";
 import { ListComponent } from "./components/ListComponent";
-import citiesJson from "./cities.json";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
 import AddCityForm from "./components/AddCityForm";
+import { AppDispatch, RootState } from "./store/store";
+import { Mode } from "./models/Mode";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCities } from "./store/cities/citiesActions";
 
 function App() {
-	const [activeCity, setActiveCity] = useState(citiesJson.cities[0]);
-	const [mode, setMode] = useState("showcase");
+	const dispatch = useDispatch<AppDispatch>();
+	const mode = useSelector((state: RootState) => state.application.mode);
+	const { loading, error } = useSelector((state: RootState) => state.cities);
 
-	const handleActiveCity = (city: City) => {
-		setActiveCity(city);
-	};
+	useEffect(() => {
+		dispatch(fetchCities());
+	}, [dispatch]);
 
-	const handleMode = (mode: string) => {
-		setMode(mode);
-	};
+	if (loading) return <div className="App">Loading...</div>;
+	if (error) return <div className="App">Error: {error}</div>;
 
 	return (
 		<div className="App">
-			{mode === "showcase" && (
+			{mode === Mode.ShowCase && (
 				<React.Fragment>
-					<AddCityButton mode={mode} handleMode={handleMode} />
+					<AddCityButton />
 					<nav>
-						<ListComponent
-							selectCity={handleActiveCity}
-							activeCity={activeCity}
-							cities={citiesJson.cities}
-						/>
+						<ListComponent />
 					</nav>
-					<ShowcaseComponent city={activeCity} />
+					<ShowcaseComponent />
 				</React.Fragment>
 			)}
 
-			{mode === "Add" && (
+			{mode === Mode.Add && (
 				<div>
-					<AddCityForm handleMode={handleMode} />
+					<AddCityForm />
 				</div>
 			)}
 		</div>

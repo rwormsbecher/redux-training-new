@@ -1,15 +1,16 @@
 import React from "react";
-import { City } from "../City";
+import { City } from "../models/City";
+import { Mode } from "../models/Mode";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { setMode } from "../store/application/applicationSlice";
 
-interface AddCityButtonProps {
-	mode: string;
-	handleMode: (mode: string) => void;
-}
-
-export const AddCityButton: React.FC<AddCityButtonProps> = ({ mode, handleMode }) => {
+export const AddCityButton: React.FC = () => {
+	const dispatch = useDispatch();
+	const mode = useSelector((state: RootState) => state.application.mode);
 	const content =
-		mode === "showcase" ? (
-			<button className="btn" onClick={() => handleMode("Add")}>
+		mode === Mode.ShowCase ? (
+			<button className="btn" onClick={() => dispatch(setMode(Mode.Add))}>
 				Add city
 			</button>
 		) : null;

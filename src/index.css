@@ -48,6 +48,7 @@ nav {
 
 li:hover {
 	background: #47525f;
+	color: white;
 	cursor: pointer;
 }
 

@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "./store/store";
 import { Mode } from "./models/Mode";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCities } from "./store/cities/citiesActions";
+import { NotificationComponent } from "./components/NotificationComponent";
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ function App() {
 
 	return (
 		<div className="App">
+			<NotificationComponent />
 			{mode === Mode.ShowCase && (
 				<React.Fragment>
 					<AddCityButton />

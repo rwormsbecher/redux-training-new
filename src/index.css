@@ -21,9 +21,9 @@ ul {
 
 	max-width: 30rem;
 	min-width: 30rem;
-	border-top: 1px solid grey;
-	border-left: 1px solid grey;
-	border-right: 1px solid grey;
+	border-top: 1px solid #47525f;
+	border-left: 1px solid #47525f;
+	border-right: 1px solid #47525f;
 }
 
 .App {
@@ -34,7 +34,7 @@ ul {
 
 ul li {
 	list-style-type: none;
-	border-bottom: 0.1rem solid grey;
+	border-bottom: 0.1rem solid #47525f;
 
 	padding: 1rem;
 	margin: 0;
@@ -47,12 +47,12 @@ nav {
 }
 
 li:hover {
-	background: lightgrey;
+	background: #47525f;
 	cursor: pointer;
 }
 
 .showcase-wrapper {
-	border: 0.1rem solid grey;
+	border: 0.1rem solid #47525f;
 	display: inline-block;
 	vertical-align: top;
 	margin: 1.6rem 0 0 10rem;
@@ -66,39 +66,41 @@ li:hover {
 }
 
 .active-city {
-	background: #c00000;
+	background: #3469a2;
 	color: white;
 }
 
 .btn {
 	padding: 1rem 3rem;
-	background: #c00000;
+	background: #3469a2;
 	color: white;
-	border: 0.1rem solid #b00000;
+	border: 0.1rem solid #2a4970;
 	cursor: pointer;
 	margin-top: 1rem;
 }
 
 .btn:hover {
-	background: #f00000;
+	background: #2a4970;
 }
 
 .sign-up-form {
-	width: 42rem;
-	margin: 1.5rem auto 0 10rem;
+	width: 600px;
+	margin: 1.5rem auto;
 	padding: 5rem;
 	font-size: 1.7rem;
 	background: #e6e6e6;
-	border: 1px solid #d2d2d2;
+	border: 1px solid #47525f;
 	vertical-align: top;
 	display: inline-block;
 }
 
 .sign-up-form input {
-	width: 100%;
+	width: calc(100% - 3rem);
 	display: block;
 	margin: 0 0 2rem 0;
-	padding: 0.4rem 0.8rem 0.6rem;
+	padding: 1rem;
+
+	color: #2a4970;
 	font-size: 1.4rem;
 }
 .sign-up-form label {
@@ -107,7 +109,7 @@ li:hover {
 	margin-bottom: 0.7rem;
 }
 .sign-up-form .input-feedback {
-	color: #dc3545;
+	color: #721c24;
 	font-style: italic;
 	margin: 0.1rem 0 0.3rem;
 	font-size: 1.2rem;
@@ -121,7 +123,13 @@ button[disabled] {
 }
 
 .btn-cancel {
-	margin-left: 2.5rem;
+	background: white;
+	color: #2a4970;
+	border: 1px solid #2a4970;
+}
+.btn-cancel:hover {
+	background: #2a4970;
+	color: white;
 }
 
 .action-bar {
@@ -132,4 +140,42 @@ button[disabled] {
 
 h1 {
 	margin-top: 0;
+}
+
+.notification-wrapper > div {
+	cursor: pointer;
+	font-weight: bold;
+}
+.notification-wrapper {
+	width: 100%;
+	padding: 8px 16px;
+	display: flex;
+	justify-content: space-between;
+	width: 91%;
+	margin-left: 4%;
+	margin-bottom: 6px;
+}
+
+.success {
+	color: #155724;
+	background-color: #d4edda;
+	border-color: #c3e6cb;
+}
+
+.failure {
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+}
+
+.button-wrapper {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.sign-up-form-container {
+	display: flex;
+	width: 100%;
+	justify-content: center;
 }

@@ -72,60 +72,64 @@ const AddCityForm: React.FC = () => {
 	};
 
 	return (
-		<div className="sign-up-form">
-			<form onSubmit={handleSubmit}>
-				<label htmlFor="title" style={{ display: "block" }}>
-					<span className="input-feedback">*</span> Title :
-				</label>
-				{errors.title && <div className="input-feedback">{errors.title}</div>}
-				<input
-					id="title"
-					name="title"
-					placeholder="Enter a title"
-					type="text"
-					value={values.title}
-					onChange={handleChange}
-					className={errors.title ? "text-input error" : "text-input"}
-					autoFocus={true}
-				/>
+		<div className="sign-up-form-container">
+			<div className="sign-up-form">
+				<form onSubmit={handleSubmit}>
+					<label htmlFor="title" style={{ display: "block" }}>
+						<span className="input-feedback">*</span> Title :
+					</label>
+					{errors.title && <div className="input-feedback">{errors.title}</div>}
+					<input
+						id="title"
+						name="title"
+						placeholder="Enter a title"
+						type="text"
+						value={values.title}
+						onChange={handleChange}
+						className={errors.title ? "text-input error" : "text-input"}
+						autoFocus={true}
+					/>
 
-				<label htmlFor="image" style={{ display: "block" }}>
-					Image:
-				</label>
-				<input
-					id="image"
-					name="image"
-					placeholder="Enter an image"
-					type="text"
-					value={values.image}
-					onChange={handleChange}
-					className={"text-input"}
-				/>
+					<label htmlFor="image" style={{ display: "block" }}>
+						Image:
+					</label>
+					<input
+						id="image"
+						name="image"
+						placeholder="Enter an image"
+						type="text"
+						value={values.image}
+						onChange={handleChange}
+						className={"text-input"}
+					/>
 
-				<label htmlFor="description" style={{ display: "block" }}>
-					Description
-				</label>
-				<input
-					id="description"
-					name="description"
-					placeholder="Enter your description"
-					type="text"
-					value={values.description}
-					onChange={handleChange}
-					className={"text-input"}
-				/>
+					<label htmlFor="description" style={{ display: "block" }}>
+						Description
+					</label>
+					<input
+						id="description"
+						name="description"
+						placeholder="Enter your description"
+						type="text"
+						value={values.description}
+						onChange={handleChange}
+						className={"text-input"}
+					/>
+					<div className="button-wrapper">
+						<button
+							type="button"
+							className="btn btn-cancel"
+							onClick={() => dispatch(setMode(Mode.ShowCase))} // Replace with your cancel logic
+						>
+							Cancel
+						</button>
 
-				<button type="submit" className="btn btn-primary teams-submit-button">
-					Add city
-				</button>
-				<button
-					type="button"
-					className="btn btn-cancel"
-					onClick={() => dispatch(setMode(Mode.ShowCase))} // Replace with your cancel logic
-				>
-					Cancel
-				</button>
-			</form>
+						<button type="submit" className="btn btn-primary teams-submit-button">
+							Add city
+						</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	);
 };

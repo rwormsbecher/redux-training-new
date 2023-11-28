@@ -1,16 +1,12 @@
 import React from "react";
-import { City } from "../models/City";
 import { Mode } from "../models/Mode";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import { setMode } from "../store/application/applicationSlice";
+import useApplicationStore from "../store/application/applicationStore";
 
 export const AddCityButton: React.FC = () => {
-	const dispatch = useDispatch();
-	const mode = useSelector((state: RootState) => state.application.mode);
+	const { mode, setMode } = useApplicationStore();
 	const content =
 		mode === Mode.ShowCase ? (
-			<button className="btn" onClick={() => dispatch(setMode(Mode.Add))}>
+			<button className="btn" onClick={() => setMode(Mode.Add)}>
 				Add city
 			</button>
 		) : null;

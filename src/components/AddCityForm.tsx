@@ -1,12 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import * as Yup from "yup";
 import { Mode } from "../models/Mode";
-import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "../store/application/applicationSlice";
 import { City } from "../models/City";
-import { RootState } from "../store/store";
-import { addCity } from "../store/cities/citiesSlice";
-import { showNotification } from "../store/notifications/notificationSlice";
+import useNotificationStore from "../store/notifications/notificationStore";
+import useApplicationStore from "../store/application/applicationStore";
+import useCitiesStore from "../store/cities/citiesStore";
 
 interface FormValues {
 	title: string;
@@ -15,8 +13,9 @@ interface FormValues {
 }
 
 const AddCityForm: React.FC = () => {
-	const dispatch = useDispatch();
-	const cities = useSelector((state: RootState) => state.cities.cities);
+	const { showNotification } = useNotificationStore();
+	const { setMode } = useApplicationStore();
+	const { cities, addCity } = useCitiesStore();
 	const [values, setValues] = useState<FormValues>({
 		title: "",
 		image: "",
@@ -65,9 +64,9 @@ const AddCityForm: React.FC = () => {
 				id: cities.length + 1,
 			};
 
-			dispatch(addCity(city));
-			dispatch(showNotification({ type: "success", text: `${values.title} has been added` }));
-			dispatch(setMode(Mode.ShowCase));
+			addCity(city);
+			showNotification("success", `${values.title} has been added`);
+			setMode(Mode.ShowCase);
 		}
 	};
 
@@ -119,7 +118,7 @@ const AddCityForm: React.FC = () => {
 						<button
 							type="button"
 							className="btn btn-cancel"
-							onClick={() => dispatch(setMode(Mode.ShowCase))} // Replace with your cancel logic
+							onClick={() => setMode(Mode.ShowCase)} // Replace with your cancel logic
 						>
 							Cancel
 						</button>

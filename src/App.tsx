@@ -4,20 +4,18 @@ import { ListComponent } from "./components/ListComponent";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
 import AddCityForm from "./components/AddCityForm";
-import { AppDispatch, RootState } from "./store/store";
 import { Mode } from "./models/Mode";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCities } from "./store/cities/citiesActions";
 import { NotificationComponent } from "./components/NotificationComponent";
+import useApplicationStore from "./store/application/applicationStore";
+import useCitiesStore from "./store/cities/citiesStore";
 
 function App() {
-	const dispatch = useDispatch<AppDispatch>();
-	const mode = useSelector((state: RootState) => state.application.mode);
-	const { loading, error } = useSelector((state: RootState) => state.cities);
+	const { loading, error, fetchCities } = useCitiesStore();
+	const { mode } = useApplicationStore();
 
 	useEffect(() => {
-		dispatch(fetchCities());
-	}, [dispatch]);
+		fetchCities();
+	}, []);
 
 	if (loading) return <div className="App">Loading...</div>;
 	if (error) return <div className="App">Error: {error}</div>;

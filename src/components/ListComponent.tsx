@@ -1,10 +1,10 @@
 import React from "react";
 import ListItemComponent from "./ListItemComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+
+import useCitiesStore from "../store/cities/citiesStore";
 
 export const ListComponent: React.FC = () => {
-	const { cities } = useSelector((state: RootState) => state.cities);
+	const { cities } = useCitiesStore();
 
 	const citiesListItemArray = cities.map((city) => <ListItemComponent city={city} key={city.id} />);
 

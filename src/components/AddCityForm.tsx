@@ -3,6 +3,9 @@ import * as Yup from "yup";
 import { City } from "../models/City";
 import { Mode } from "../models/Mode";
 import { NotificationType } from "../models/Notification";
+import { setMode } from "../store/application/applicationSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
 
 interface FormValues {
 	title: string;
@@ -13,11 +16,12 @@ interface FormValues {
 interface AddCityFormProps {
 	cities: City[];
 	setCities: React.Dispatch<React.SetStateAction<City[]>>;
-	setMode: React.Dispatch<React.SetStateAction<Mode>>;
 	setNotification: React.Dispatch<React.SetStateAction<NotificationType>>;
 }
 
-const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setMode, setNotification }) => {
+const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setNotification }) => {
+	const dispatch = useDispatch<AppDispatch>();
+
 	const [values, setValues] = useState<FormValues>({
 		title: "",
 		image: "",
@@ -67,7 +71,7 @@ const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setMode, s
 			};
 
 			setCities([...cities, city]);
-			setMode(Mode.ShowCase);
+			dispatch(setMode(Mode.ShowCase));
 			setNotification({ type: "success", text: `${values.title} has been added`, visible: true });
 		}
 	};
@@ -117,7 +121,11 @@ const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setMode, s
 						className={"text-input"}
 					/>
 					<div className="button-wrapper">
-						<button type="button" className="btn btn-cancel" onClick={() => setMode(Mode.ShowCase)}>
+						<button
+							type="button"
+							className="btn btn-cancel"
+							onClick={() => dispatch(setMode(Mode.ShowCase))}
+						>
 							Cancel
 						</button>
 

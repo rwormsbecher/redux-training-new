@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Mode } from "../../models/Mode";
 
 export const applicationSlice = createSlice({
@@ -6,8 +6,12 @@ export const applicationSlice = createSlice({
 	initialState: {
 		mode: Mode.ShowCase,
 	},
-	reducers: {},
+	reducers: {
+		setMode: (state, action: PayloadAction<Mode>) => {
+			state.mode = action.payload;
+		},
+	},
 });
 
-export const {} = applicationSlice.actions;
+export const { setMode } = applicationSlice.actions;
 export default applicationSlice.reducer;

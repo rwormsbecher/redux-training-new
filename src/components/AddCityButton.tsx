@@ -1,15 +1,16 @@
 import React from "react";
 import { Mode } from "../models/Mode";
+import { setMode } from "../store/application/applicationSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
 
-interface AddCityButtonProps {
-	mode: Mode;
-	setMode: React.Dispatch<React.SetStateAction<Mode>>;
-}
+export const AddCityButton: React.FC = () => {
+	const dispatch = useDispatch<AppDispatch>();
+	const mode = useSelector((state: RootState) => state.application.mode);
 
-export const AddCityButton: React.FC<AddCityButtonProps> = ({ mode, setMode }) => {
 	const content =
 		mode === Mode.ShowCase ? (
-			<button className="btn" onClick={() => setMode(Mode.Add)}>
+			<button className="btn" onClick={() => dispatch(setMode(Mode.Add))}>
 				Add city
 			</button>
 		) : null;

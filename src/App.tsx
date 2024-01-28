@@ -3,21 +3,21 @@ import { ShowcaseComponent } from "./components/ShowcaseComponent";
 import { ListComponent } from "./components/ListComponent";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
-
 import { Mode } from "./models/Mode";
-
 import { CitiesApiResponse } from "./models/CitiesApiResponse";
 import { City } from "./models/City";
 import AddCityForm from "./components/AddCityForm";
 import { NotificationType } from "./models/Notification";
 import { NotificationComponent } from "./components/NotificationComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/store";
 
 function App() {
 	const [cities, setCities] = useState<City[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [mode, setMode] = useState(Mode.ShowCase);
 	const [activeCity, setActiveCity] = useState<City>({} as City);
 	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
+	const mode = useSelector((state: RootState) => state.application.mode);
 
 	useEffect(() => {
 		const fetchCities = async () => {
@@ -42,7 +42,7 @@ function App() {
 			<NotificationComponent setNotification={setNotification} notification={notification} />
 			{mode === Mode.ShowCase && (
 				<React.Fragment>
-					<AddCityButton setMode={setMode} mode={mode} />
+					<AddCityButton />
 					<nav>
 						<ListComponent cities={cities} activeCity={activeCity} setActiveCity={setActiveCity} />
 					</nav>
@@ -52,12 +52,7 @@ function App() {
 
 			{mode === Mode.Add && (
 				<div>
-					<AddCityForm
-						cities={cities}
-						setCities={setCities}
-						setMode={setMode}
-						setNotification={setNotification}
-					/>
+					<AddCityForm cities={cities} setCities={setCities} setNotification={setNotification} />
 				</div>
 			)}
 		</div>

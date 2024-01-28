@@ -9,4 +9,4 @@ Welcome to this training course on how to integrate Redux-toolkit together with 
 
 The course is seperated in several topics. If you follow along with the explainations, every time you will be asked to put into practise the knowledge we covered. Each exercise is marked witha number. Each exercise will have it's own branch and this readme.md contains the answers for the exercise for that number. However we DO ENCOURAGE you to first try the exercises for a paramount learning experience.
 
-# Let's get started!
+### Let's get started!

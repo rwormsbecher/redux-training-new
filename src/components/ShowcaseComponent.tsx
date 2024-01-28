@@ -5,13 +5,11 @@ import London from "../assets/images/london.jpg";
 import Mumbai from "../assets/images/mumbai.jpg";
 import Sacramento from "../assets/images/sacramento.jpg";
 import Nieuwegein from "../assets/images/nieuwegein.jpg";
-import { City } from "../models/City";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
-interface ShowcaseComponentProps {
-	activeCity: City;
-}
-
-export const ShowcaseComponent: React.FC<ShowcaseComponentProps> = ({ activeCity }) => {
+export const ShowcaseComponent: React.FC = () => {
+	const { activeCity } = useSelector((state: RootState) => state.cities);
 	let img = null;
 
 	// dynamic imports only work in Chrome...

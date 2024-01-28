@@ -4,17 +4,10 @@ import { City } from "../models/City";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 
-interface ListComponentProps {
-	activeCity: City;
-	setActiveCity: React.Dispatch<React.SetStateAction<City>>;
-}
-
-export const ListComponent: React.FC<ListComponentProps> = ({ activeCity, setActiveCity }) => {
+export const ListComponent: React.FC = () => {
 	const { cities } = useSelector((state: RootState) => state.cities);
 
-	const citiesListItemArray = cities.map((city: City) => (
-		<ListItemComponent city={city} key={city.id} setActiveCity={setActiveCity} activeCity={activeCity} />
-	));
+	const citiesListItemArray = cities.map((city: City) => <ListItemComponent city={city} key={city.id} />);
 
 	return <ul>{citiesListItemArray}</ul>;
 };

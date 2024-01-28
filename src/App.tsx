@@ -13,7 +13,6 @@ import { AppDispatch, RootState } from "./store/store";
 import { fetchCities } from "./store/cities/citiesActions";
 
 function App() {
-	const [activeCity, setActiveCity] = useState<City>({} as City);
 	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
 	const dispatch = useDispatch<AppDispatch>();
 	const mode = useSelector((state: RootState) => state.application.mode);
@@ -33,9 +32,9 @@ function App() {
 				<React.Fragment>
 					<AddCityButton />
 					<nav>
-						<ListComponent activeCity={activeCity} setActiveCity={setActiveCity} />
+						<ListComponent />
 					</nav>
-					<ShowcaseComponent activeCity={activeCity} />
+					<ShowcaseComponent />
 				</React.Fragment>
 			)}
 

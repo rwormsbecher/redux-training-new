@@ -893,3 +893,198 @@ function App() {
 
 export default App;
 ```
+
+#### Exercise 5
+
+src\store\cities\citiesSlice.ts
+
+```typescript
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CitiesApiResponse, fetchCities } from "./citiesActions";
+import { City } from "../../models/City";
+
+interface CitiesState {
+	cities: City[];
+	loading: boolean;
+	error: string | null;
+	activeCity: City;
+}
+
+const initialState: CitiesState = {
+	cities: [],
+	loading: false,
+	error: null,
+	activeCity: {} as City,
+};
+
+export const citiesSlice = createSlice({
+	name: "cities",
+	initialState,
+	reducers: {
+		setActiveCity: (state, action: PayloadAction<City | null>) => {
+			state.activeCity = action.payload || ({} as City);
+		},
+		addCity: (state, action: PayloadAction<City>) => {
+			state.cities.push(action.payload);
+		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchCities.pending, (state) => {
+				state.loading = true;
+			})
+			.addCase(fetchCities.fulfilled, (state, action: PayloadAction<CitiesApiResponse>) => {
+				state.cities = action.payload.cities;
+				state.error = "";
+				state.activeCity = action.payload.cities[0];
+				state.loading = false;
+			})
+			.addCase(fetchCities.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.error.message || "Failed to fetch cities";
+			});
+	},
+});
+
+export const { addCity, setActiveCity } = citiesSlice.actions;
+export default citiesSlice.reducer;
+```
+
+src\components\ShowcaseComponent.tsx
+
+```typescript
+import React from "react";
+import Amsterdam from "../assets/images/amsterdam.jpg";
+import Shenzhen from "../assets/images/shenzhen.jpg";
+import London from "../assets/images/london.jpg";
+import Mumbai from "../assets/images/mumbai.jpg";
+import Sacramento from "../assets/images/sacramento.jpg";
+import Nieuwegein from "../assets/images/nieuwegein.jpg";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+export const ShowcaseComponent: React.FC = () => {
+	const { activeCity } = useSelector((state: RootState) => state.cities);
+	let img = null;
+
+	// dynamic imports only work in Chrome...
+	if (activeCity.cityName === "Amsterdam") img = Amsterdam;
+	else if (activeCity.cityName === "Shenzhen") img = Shenzhen;
+	else if (activeCity.cityName === "London") img = London;
+	else if (activeCity.cityName === "Mumbai") img = Mumbai;
+	else if (activeCity.cityName === "Sacramento") img = Sacramento;
+	else if (activeCity.cityName === "nieuwegein") img = Nieuwegein;
+	else img = activeCity.image;
+
+	return (
+		<section className="showcase-wrapper">
+			<h1 className="showcase-wrapper__title">{activeCity.cityName}</h1>
+			<img src={img} alt={activeCity.cityName} />
+			<div>{activeCity.summary}</div>
+		</section>
+	);
+};
+```
+
+src\components\ListItemComponent.tsx
+
+```typescript
+import React from "react";
+import { City } from "../models/City";
+import { AppDispatch, RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveCity } from "../store/cities/citiesSlice";
+
+interface ListItemComponentProps {
+	city: City;
+}
+
+const ListItemComponent: React.FC<ListItemComponentProps> = ({ city }) => {
+	const dispatch = useDispatch<AppDispatch>();
+	const { activeCity } = useSelector((state: RootState) => state.cities);
+
+	return (
+		<li
+			className={city.cityName === activeCity.cityName ? "active-city" : ""}
+			onClick={() => dispatch(setActiveCity(city))}
+		>
+			{city.cityName}
+		</li>
+	);
+};
+
+export default ListItemComponent;
+```
+
+src\components\ListComponent.tsx
+
+```typescript
+import React from "react";
+import ListItemComponent from "./ListItemComponent";
+import { City } from "../models/City";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+export const ListComponent: React.FC = () => {
+	const { cities } = useSelector((state: RootState) => state.cities);
+
+	const citiesListItemArray = cities.map((city: City) => <ListItemComponent city={city} key={city.id} />);
+
+	return <ul>{citiesListItemArray}</ul>;
+};
+```
+
+src\App.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import { ShowcaseComponent } from "./components/ShowcaseComponent";
+import { ListComponent } from "./components/ListComponent";
+import { AddCityButton } from "./components/AddCityButton";
+import React from "react";
+import { Mode } from "./models/Mode";
+import { City } from "./models/City";
+import AddCityForm from "./components/AddCityForm";
+import { NotificationType } from "./models/Notification";
+import { NotificationComponent } from "./components/NotificationComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store/store";
+import { fetchCities } from "./store/cities/citiesActions";
+
+function App() {
+	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
+	const dispatch = useDispatch<AppDispatch>();
+	const mode = useSelector((state: RootState) => state.application.mode);
+	const { loading, error } = useSelector((state: RootState) => state.cities);
+
+	useEffect(() => {
+		dispatch(fetchCities());
+	}, [dispatch]);
+
+	if (loading) return <div className="App">Loading...</div>;
+	if (error) return <div className="App">Error: {error}</div>;
+
+	return (
+		<div className="App">
+			<NotificationComponent setNotification={setNotification} notification={notification} />
+			{mode === Mode.ShowCase && (
+				<React.Fragment>
+					<AddCityButton />
+					<nav>
+						<ListComponent />
+					</nav>
+					<ShowcaseComponent />
+				</React.Fragment>
+			)}
+
+			{mode === Mode.Add && (
+				<div>
+					<AddCityForm setNotification={setNotification} />
+				</div>
+			)}
+		</div>
+	);
+}
+
+export default App;
+```

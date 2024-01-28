@@ -4,38 +4,28 @@ import { ListComponent } from "./components/ListComponent";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
 import { Mode } from "./models/Mode";
-import { CitiesApiResponse } from "./models/CitiesApiResponse";
 import { City } from "./models/City";
 import AddCityForm from "./components/AddCityForm";
 import { NotificationType } from "./models/Notification";
 import { NotificationComponent } from "./components/NotificationComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "./store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store/store";
+import { fetchCities } from "./store/cities/citiesActions";
 
 function App() {
-	const [cities, setCities] = useState<City[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
 	const [activeCity, setActiveCity] = useState<City>({} as City);
+	const [cities, setCities] = useState<City[]>([]);
 	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
+	const dispatch = useDispatch<AppDispatch>();
 	const mode = useSelector((state: RootState) => state.application.mode);
+	const { loading, error } = useSelector((state: RootState) => state.cities);
 
 	useEffect(() => {
-		const fetchCities = async () => {
-			try {
-				const response = await fetch("https://greensocapi.azurewebsites.net/api/Cities");
-				const { cities } = (await response.json()) as CitiesApiResponse;
-				setCities(cities);
-				setLoading(false);
-				setActiveCity(cities[0]);
-			} catch (error) {
-				return;
-			}
-		};
-
-		fetchCities();
-	}, []);
+		dispatch(fetchCities());
+	}, [dispatch]);
 
 	if (loading) return <div className="App">Loading...</div>;
+	if (error) return <div className="App">Error: {error}</div>;
 
 	return (
 		<div className="App">
@@ -44,7 +34,7 @@ function App() {
 				<React.Fragment>
 					<AddCityButton />
 					<nav>
-						<ListComponent cities={cities} activeCity={activeCity} setActiveCity={setActiveCity} />
+						<ListComponent activeCity={activeCity} setActiveCity={setActiveCity} />
 					</nav>
 					<ShowcaseComponent activeCity={activeCity} />
 				</React.Fragment>
@@ -52,7 +42,7 @@ function App() {
 
 			{mode === Mode.Add && (
 				<div>
-					<AddCityForm cities={cities} setCities={setCities} setNotification={setNotification} />
+					<AddCityForm setCities={setCities} setNotification={setNotification} />
 				</div>
 			)}
 		</div>

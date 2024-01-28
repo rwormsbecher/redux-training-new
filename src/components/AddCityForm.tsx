@@ -4,8 +4,8 @@ import { City } from "../models/City";
 import { Mode } from "../models/Mode";
 import { NotificationType } from "../models/Notification";
 import { setMode } from "../store/application/applicationSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
 
 interface FormValues {
 	title: string;
@@ -14,13 +14,13 @@ interface FormValues {
 }
 
 interface AddCityFormProps {
-	cities: City[];
 	setCities: React.Dispatch<React.SetStateAction<City[]>>;
 	setNotification: React.Dispatch<React.SetStateAction<NotificationType>>;
 }
 
-const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setNotification }) => {
+const AddCityForm: React.FC<AddCityFormProps> = ({ setCities, setNotification }) => {
 	const dispatch = useDispatch<AppDispatch>();
+	const cities = useSelector((state: RootState) => state.cities.cities);
 
 	const [values, setValues] = useState<FormValues>({
 		title: "",

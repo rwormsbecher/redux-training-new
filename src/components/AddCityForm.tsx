@@ -1,12 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import * as Yup from "yup";
-import { Mode } from "../models/Mode";
-import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "../store/application/applicationSlice";
 import { City } from "../models/City";
-import { RootState } from "../store/store";
-import { addCity } from "../store/cities/citiesSlice";
-import { showNotification } from "../store/notifications/notificationSlice";
+import { Mode } from "../models/Mode";
+import { NotificationType } from "../models/Notification";
 
 interface FormValues {
 	title: string;
@@ -14,9 +10,14 @@ interface FormValues {
 	description: string;
 }
 
-const AddCityForm: React.FC = () => {
-	const dispatch = useDispatch();
-	const cities = useSelector((state: RootState) => state.cities.cities);
+interface AddCityFormProps {
+	cities: City[];
+	setCities: React.Dispatch<React.SetStateAction<City[]>>;
+	setMode: React.Dispatch<React.SetStateAction<Mode>>;
+	setNotification: React.Dispatch<React.SetStateAction<NotificationType>>;
+}
+
+const AddCityForm: React.FC<AddCityFormProps> = ({ cities, setCities, setMode, setNotification }) => {
 	const [values, setValues] = useState<FormValues>({
 		title: "",
 		image: "",
@@ -65,9 +66,9 @@ const AddCityForm: React.FC = () => {
 				id: cities.length + 1,
 			};
 
-			dispatch(addCity(city));
-			dispatch(showNotification({ type: "success", text: `${values.title} has been added` }));
-			dispatch(setMode(Mode.ShowCase));
+			setCities([...cities, city]);
+			setMode(Mode.ShowCase);
+			setNotification({ type: "success", text: `${values.title} has been added`, visible: true });
 		}
 	};
 
@@ -116,11 +117,7 @@ const AddCityForm: React.FC = () => {
 						className={"text-input"}
 					/>
 					<div className="button-wrapper">
-						<button
-							type="button"
-							className="btn btn-cancel"
-							onClick={() => dispatch(setMode(Mode.ShowCase))} // Replace with your cancel logic
-						>
+						<button type="button" className="btn btn-cancel" onClick={() => setMode(Mode.ShowCase)}>
 							Cancel
 						</button>
 

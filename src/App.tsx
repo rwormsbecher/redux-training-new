@@ -1,43 +1,63 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ShowcaseComponent } from "./components/ShowcaseComponent";
 import { ListComponent } from "./components/ListComponent";
 import { AddCityButton } from "./components/AddCityButton";
 import React from "react";
-import AddCityForm from "./components/AddCityForm";
-import { AppDispatch, RootState } from "./store/store";
+
 import { Mode } from "./models/Mode";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCities } from "./store/cities/citiesActions";
+
+import { CitiesApiResponse } from "./models/CitiesApiResponse";
+import { City } from "./models/City";
+import AddCityForm from "./components/AddCityForm";
+import { NotificationType } from "./models/Notification";
 import { NotificationComponent } from "./components/NotificationComponent";
 
 function App() {
-	const dispatch = useDispatch<AppDispatch>();
-	const mode = useSelector((state: RootState) => state.application.mode);
-	const { loading, error } = useSelector((state: RootState) => state.cities);
+	const [cities, setCities] = useState<City[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [mode, setMode] = useState(Mode.ShowCase);
+	const [activeCity, setActiveCity] = useState<City>({} as City);
+	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
 
 	useEffect(() => {
-		dispatch(fetchCities());
-	}, [dispatch]);
+		const fetchCities = async () => {
+			try {
+				const response = await fetch("https://greensocapi.azurewebsites.net/api/Cities");
+				const { cities } = (await response.json()) as CitiesApiResponse;
+				setCities(cities);
+				setLoading(false);
+				setActiveCity(cities[0]);
+			} catch (error) {
+				return;
+			}
+		};
+
+		fetchCities();
+	}, []);
 
 	if (loading) return <div className="App">Loading...</div>;
-	if (error) return <div className="App">Error: {error}</div>;
 
 	return (
 		<div className="App">
-			<NotificationComponent />
+			<NotificationComponent setNotification={setNotification} notification={notification} />
 			{mode === Mode.ShowCase && (
 				<React.Fragment>
-					<AddCityButton />
+					<AddCityButton setMode={setMode} mode={mode} />
 					<nav>
-						<ListComponent />
+						<ListComponent cities={cities} activeCity={activeCity} setActiveCity={setActiveCity} />
 					</nav>
-					<ShowcaseComponent />
+					<ShowcaseComponent activeCity={activeCity} />
 				</React.Fragment>
 			)}
 
 			{mode === Mode.Add && (
 				<div>
-					<AddCityForm />
+					<AddCityForm
+						cities={cities}
+						setCities={setCities}
+						setMode={setMode}
+						setNotification={setNotification}
+					/>
 				</div>
 			)}
 		</div>

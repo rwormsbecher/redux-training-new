@@ -6,6 +6,7 @@ import { NotificationType } from "../models/Notification";
 import { setMode } from "../store/application/applicationSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
+import { addCity } from "../store/cities/citiesSlice";
 
 interface FormValues {
 	title: string;
@@ -14,11 +15,10 @@ interface FormValues {
 }
 
 interface AddCityFormProps {
-	setCities: React.Dispatch<React.SetStateAction<City[]>>;
 	setNotification: React.Dispatch<React.SetStateAction<NotificationType>>;
 }
 
-const AddCityForm: React.FC<AddCityFormProps> = ({ setCities, setNotification }) => {
+const AddCityForm: React.FC<AddCityFormProps> = ({ setNotification }) => {
 	const dispatch = useDispatch<AppDispatch>();
 	const cities = useSelector((state: RootState) => state.cities.cities);
 
@@ -70,7 +70,7 @@ const AddCityForm: React.FC<AddCityFormProps> = ({ setCities, setNotification })
 				id: cities.length + 1,
 			};
 
-			setCities([...cities, city]);
+			dispatch(addCity(city));
 			dispatch(setMode(Mode.ShowCase));
 			setNotification({ type: "success", text: `${values.title} has been added`, visible: true });
 		}

@@ -17,7 +17,11 @@ const initialState: CitiesState = {
 export const citiesSlice = createSlice({
 	name: "cities",
 	initialState,
-	reducers: {},
+	reducers: {
+		addCity: (state, action: PayloadAction<City>) => {
+			state.cities.push(action.payload);
+		},
+	},
 	extraReducers: (builder) => {
 		builder
 			.addCase(fetchCities.pending, (state) => {
@@ -35,5 +39,5 @@ export const citiesSlice = createSlice({
 	},
 });
 
-export const {} = citiesSlice.actions;
+export const { addCity } = citiesSlice.actions;
 export default citiesSlice.reducer;

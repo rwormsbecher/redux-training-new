@@ -14,7 +14,6 @@ import { fetchCities } from "./store/cities/citiesActions";
 
 function App() {
 	const [activeCity, setActiveCity] = useState<City>({} as City);
-	const [cities, setCities] = useState<City[]>([]);
 	const [notification, setNotification] = useState<NotificationType>({} as NotificationType);
 	const dispatch = useDispatch<AppDispatch>();
 	const mode = useSelector((state: RootState) => state.application.mode);
@@ -42,7 +41,7 @@ function App() {
 
 			{mode === Mode.Add && (
 				<div>
-					<AddCityForm setCities={setCities} setNotification={setNotification} />
+					<AddCityForm setNotification={setNotification} />
 				</div>
 			)}
 		</div>

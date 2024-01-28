@@ -1088,3 +1088,284 @@ function App() {
 
 export default App;
 ```
+
+#### Exercise 6
+
+src\store\notifications\notificationSlice.ts
+
+```typescript
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface NotificationState {
+	type: string | null;
+	text: string | null;
+	visible: boolean;
+}
+
+const initialState: NotificationState = {
+	type: null,
+	text: null,
+	visible: false,
+};
+
+export const notificationSlice = createSlice({
+	name: "notification",
+	initialState,
+	reducers: {
+		showNotification: (state, action: PayloadAction<{ type: string; text: string }>) => {
+			state.type = action.payload.type;
+			state.text = action.payload.text;
+			state.visible = true;
+		},
+		hideNotification: (state) => {
+			state.visible = false;
+			state.type = null;
+			state.text = null;
+		},
+	},
+});
+
+export const { showNotification, hideNotification } = notificationSlice.actions;
+export default notificationSlice.reducer;
+```
+
+src\store\store.ts
+
+```typescript
+import { configureStore } from "@reduxjs/toolkit";
+import applicationSlice from "./application/applicationSlice";
+import citiesSlice from "./cities/citiesSlice";
+import notificationSlice from "./notifications/notificationSlice";
+
+export const store = configureStore({
+	reducer: {
+		application: applicationSlice,
+		cities: citiesSlice,
+		notifications: notificationSlice,
+	},
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+```
+
+src\components\AddCityForm.tsx
+
+```typescript
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import * as Yup from "yup";
+import { City } from "../models/City";
+import { Mode } from "../models/Mode";
+import { setMode } from "../store/application/applicationSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { addCity } from "../store/cities/citiesSlice";
+import { showNotification } from "../store/notifications/notificationSlice";
+
+interface FormValues {
+	title: string;
+	image: string;
+	description: string;
+}
+
+const AddCityForm: React.FC = () => {
+	const dispatch = useDispatch<AppDispatch>();
+	const cities = useSelector((state: RootState) => state.cities.cities);
+
+	const [values, setValues] = useState<FormValues>({
+		title: "",
+		image: "",
+		description: "",
+	});
+
+	const [errors, setErrors] = useState<Record<string, string>>({});
+
+	const validate = (values: FormValues): Record<string, string> => {
+		const validationSchema = Yup.object().shape({
+			title: Yup.string().min(2, "You must at least use 2 characters.").required("You must enter a title."),
+		});
+
+		try {
+			validationSchema.validateSync(values, { abortEarly: false });
+			return {};
+		} catch (err) {
+			const validationErrors = err as Yup.ValidationError;
+			return validationErrors.inner.reduce(
+				(errors: Record<string, string>, error: Yup.ValidationError) => ({
+					...errors,
+					[error.path!]: error.message,
+				}),
+				{}
+			);
+		}
+	};
+
+	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setValues({
+			...values,
+			[event.target.name]: event.target.value,
+		});
+	};
+
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const validationErrors = validate(values);
+		setErrors(validationErrors);
+
+		if (Object.keys(validationErrors).length === 0) {
+			const city: City = {
+				cityName: values.title,
+				summary: values.description,
+				image: values.image,
+				id: cities.length + 1,
+			};
+
+			dispatch(addCity(city));
+			dispatch(setMode(Mode.ShowCase));
+			dispatch(showNotification({ type: "success", text: `${values.title} has been added` }));
+		}
+	};
+
+	return (
+		<div className="sign-up-form-container">
+			<div className="sign-up-form">
+				<form onSubmit={handleSubmit}>
+					<label htmlFor="title" style={{ display: "block" }}>
+						<span className="input-feedback">*</span> Title :
+					</label>
+					{errors.title && <div className="input-feedback">{errors.title}</div>}
+					<input
+						id="title"
+						name="title"
+						placeholder="Enter a title"
+						type="text"
+						value={values.title}
+						onChange={handleChange}
+						className={errors.title ? "text-input error" : "text-input"}
+						autoFocus={true}
+					/>
+
+					<label htmlFor="image" style={{ display: "block" }}>
+						Image:
+					</label>
+					<input
+						id="image"
+						name="image"
+						placeholder="Enter an image"
+						type="text"
+						value={values.image}
+						onChange={handleChange}
+						className={"text-input"}
+					/>
+
+					<label htmlFor="description" style={{ display: "block" }}>
+						Description
+					</label>
+					<input
+						id="description"
+						name="description"
+						placeholder="Enter your description"
+						type="text"
+						value={values.description}
+						onChange={handleChange}
+						className={"text-input"}
+					/>
+					<div className="button-wrapper">
+						<button
+							type="button"
+							className="btn btn-cancel"
+							onClick={() => dispatch(setMode(Mode.ShowCase))}
+						>
+							Cancel
+						</button>
+
+						<button type="submit" className="btn btn-primary teams-submit-button">
+							Add city
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+};
+
+export default AddCityForm;
+```
+
+src\store\notifications\notificationSlice.ts
+
+```typescript
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { hideNotification } from "../store/notifications/notificationSlice";
+
+export const NotificationComponent: React.FC = () => {
+	const dispatch = useDispatch<AppDispatch>();
+	const notification = useSelector((state: RootState) => state.notifications);
+
+	return (
+		<div>
+			{notification.visible && (
+				<div className={notification.visible ? "notification-wrapper success" : "notification-wrapper failure"}>
+					<span>{notification.text}</span>
+					<div onClick={() => dispatch(hideNotification())}>X</div>
+				</div>
+			)}
+		</div>
+	);
+};
+```
+
+src\App.tsx
+
+```typescript
+import { useEffect } from "react";
+import { ShowcaseComponent } from "./components/ShowcaseComponent";
+import { ListComponent } from "./components/ListComponent";
+import { AddCityButton } from "./components/AddCityButton";
+import React from "react";
+import { Mode } from "./models/Mode";
+import AddCityForm from "./components/AddCityForm";
+
+import { NotificationComponent } from "./components/NotificationComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store/store";
+import { fetchCities } from "./store/cities/citiesActions";
+
+function App() {
+	const dispatch = useDispatch<AppDispatch>();
+	const mode = useSelector((state: RootState) => state.application.mode);
+	const { loading, error } = useSelector((state: RootState) => state.cities);
+
+	useEffect(() => {
+		dispatch(fetchCities());
+	}, [dispatch]);
+
+	if (loading) return <div className="App">Loading...</div>;
+	if (error) return <div className="App">Error: {error}</div>;
+
+	return (
+		<div className="App">
+			<NotificationComponent />
+			{mode === Mode.ShowCase && (
+				<React.Fragment>
+					<AddCityButton />
+					<nav>
+						<ListComponent />
+					</nav>
+					<ShowcaseComponent />
+				</React.Fragment>
+			)}
+
+			{mode === Mode.Add && (
+				<div>
+					<AddCityForm />
+				</div>
+			)}
+		</div>
+	);
+}
+
+export default App;
+```

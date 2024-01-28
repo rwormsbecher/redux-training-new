@@ -1,18 +1,18 @@
 import React from "react";
-import { NotificationType } from "../models/Notification";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { hideNotification } from "../store/notifications/notificationSlice";
 
-interface NotificationComponentProps {
-	notification: NotificationType;
-	setNotification: React.Dispatch<React.SetStateAction<NotificationType>>;
-}
+export const NotificationComponent: React.FC = () => {
+	const dispatch = useDispatch<AppDispatch>();
+	const notification = useSelector((state: RootState) => state.notifications);
 
-export const NotificationComponent: React.FC<NotificationComponentProps> = ({ notification, setNotification }) => {
 	return (
 		<div>
 			{notification.visible && (
 				<div className={notification.visible ? "notification-wrapper success" : "notification-wrapper failure"}>
 					<span>{notification.text}</span>
-					<div onClick={() => setNotification({ type: "success", text: "", visible: false })}>X</div>
+					<div onClick={() => dispatch(hideNotification())}>X</div>
 				</div>
 			)}
 		</div>
